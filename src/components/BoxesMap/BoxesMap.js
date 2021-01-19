@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { readRemoteFile } from "react-papaparse";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import "leaflet/dist/leaflet.css";
@@ -14,10 +14,17 @@ const DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
+const ChangeView = ({ center, zoom }) => {
+  const map = useMap();
+  map.flyTo(center, zoom);
+  return null;
+};
+
 const BoxesMap = () => {
   const [boxesData, setBoxesData] = useState([]);
   const [error, setError] = useState(null);
-  const position = [48.856614, 2.3522219];
+  const [position, setPosition] = useState([47.2244, 2.44472]);
+  const [zoom, setZoom] = useState(6);
 
   useEffect(() => {
     readRemoteFile("./data/boite_a_lire.csv", {
@@ -33,12 +40,17 @@ const BoxesMap = () => {
       transform: (value, col) => {
         if (col === "Coord_GPS") {
           let res = value.split(",");
-          res = res.map((i) => Number(i));
+          res = res.map((coord) => Number(coord));
           return res;
         }
         return value;
       },
       skipEmptyLines: "greedy",
+    });
+
+    navigator.geolocation.getCurrentPosition((pos) => {
+      setPosition([pos.coords.latitude, pos.coords.longitude]);
+      setZoom(15);
     });
   }, []);
 
@@ -48,7 +60,7 @@ const BoxesMap = () => {
       <MapContainer
         className="map-container"
         center={position}
-        zoom={6}
+        zoom={zoom}
         scrollWheelZoom={false}
         preferCanvas={true}
       >
@@ -57,21 +69,20 @@ const BoxesMap = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <MarkerClusterGroup showCoverageOnHover={false}>
-          <>
-            {boxesData.length > 0 &&
-              boxesData.map((boxData, index) => (
-                <Marker key={index} position={boxData.Coord_GPS}>
-                  <Popup>
-                    <p>{boxData.Adresse}</p>
-                    <p>{boxData.Code_Postal}</p>
-                    <p>{boxData.Ville}</p>
-                    <p>{boxData.Pays}</p>
-                    <p>{boxData.Remarque}</p>
-                  </Popup>
-                </Marker>
-              ))}
-          </>
+          {boxesData.length > 0 &&
+            boxesData.map((boxData, index) => (
+              <Marker key={index} position={boxData.Coord_GPS}>
+                <Popup>
+                  {boxData.Adresse && <p>{boxData.Adresse}</p>}
+                  {boxData.Code_Postal && <p>{boxData.Code_Postal}</p>}
+                  {boxData.Ville && <p>{boxData.Ville}</p>}
+                  {boxData.Pays && <p>{boxData.Pays}</p>}
+                  {boxData.Remarque && <p>{boxData.Remarque}</p>}
+                </Popup>
+              </Marker>
+            ))}
         </MarkerClusterGroup>
+        <ChangeView center={position} zoom={zoom} />
       </MapContainer>
     </>
   );
