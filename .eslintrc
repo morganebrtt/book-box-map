@@ -12,6 +12,11 @@
     ],
     "rules": {
       "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-      "prettier/prettier": "warn"
+      "prettier/prettier": ["warn", {
+        "endOfLine":"auto"
+      }],
+      "react/no-array-index-key": 0,
+      "no-unused-vars": 0,
+      "react/jsx-boolean-value": 0
     }
   }

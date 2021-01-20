@@ -1,24 +1,19 @@
 import React from "react";
-import logo from "./logo.svg";
+import BoxesMap from "./components/BoxesMap/BoxesMap";
 import "./App.css";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+    <div className="app">
+      <h1>Trouver une boîte à lire</h1>
+      <div className="description-container">
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Vous cherchez une boîte à lire pour y déposer des livres ou découvrir
+          de nouvelles perles? Trouvez la boîte la plus proche grâce à la carte
+          ci-dessous.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      </div>
+      <BoxesMap />
     </div>
   );
 }
