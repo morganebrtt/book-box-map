@@ -72,10 +72,11 @@ const BoxesMap = () => {
           {boxesData.length > 0 &&
             boxesData.map((boxData, index) => (
               <Marker key={index} position={boxData.Coord_GPS}>
-                <Popup>
+                <Popup className="popup-container">
                   {boxData.Adresse && <p>{boxData.Adresse}</p>}
-                  {boxData.Code_Postal && <p>{boxData.Code_Postal}</p>}
-                  {boxData.Ville && <p>{boxData.Ville}</p>}
+                  {(boxData.Code_Postal || boxData.Ville) && (
+                    <p>{`${boxData.Code_Postal} ${boxData.Ville}`}</p>
+                  )}
                   {boxData.Pays && <p>{boxData.Pays}</p>}
                   {boxData.Remarque && <p>{boxData.Remarque}</p>}
                 </Popup>
